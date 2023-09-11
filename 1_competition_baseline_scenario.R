@@ -1,5 +1,5 @@
 
-rm(list=ls())
+rm(list=ls())  #removes stuff from environment.
 # plot resource distribution            ----
 par(mfrow=c(1,2))
 z <- seq(0,20,0.01); omega<-7
@@ -17,7 +17,7 @@ par(mfrow=c(1,1))
 resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.001, mutVar=0.1, years=200, iniPmean=5, iniPvar=0.05, dispProb=0.5){
 
   # initialize population ......................................
-  pop           <- matrix(NA, ncol=3, nrow=sum(popSize))
+  pop           <- matrix(NA, ncol=3, nrow=sum(popSize))      #NA is used here to preallocate memory for each entry while still not filling them with a value. 
   colnames(pop) <- c("patch", "pheno", "fec")
   
   pop[,1] <- c(rep.int(1,popSize[1]), rep.int(2, popSize[2]))
@@ -29,7 +29,7 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
     
     # compute fecundity proxy ----
     # compute alpha - patch 1 ............................................................
-    patch1    <- pop[pop[,1]==1,]
+    patch1    <- pop[pop[,1]==1,]   #This extracts all values in the pop matrix where the patch=1, i.e. they belong to patch 1. So all the rows with patch =2 are removed
     alphaSum1 <- NULL
     alpha1    <- NULL
     for(r in 1:ncol(resProp)){ # r<-1 # loop through each resource
@@ -146,6 +146,7 @@ par(mfrow=c(1,1))
 # explore parameters with replicates    ----
 propVal    <- c(0.25, 0.4, 0.50, 0.55, 0.6, 0.7, 1.00)
 propVar <- NULL
+
 for(i in 1:length(propVal)){ # i<-1
   propVar    <- c(propVar, sum(((-2:2)*propVal[i]-0)^2)/5 )
 }
