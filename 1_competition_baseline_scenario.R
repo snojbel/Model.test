@@ -24,7 +24,8 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
   pop[,2] <- rnorm(n=sum(popSize), mean=iniPmean, sd=0.05)
   
   stats         <- NULL
-  phenotype     <- NULL
+  phenotype <- matrix(NA, ncol=3, nrow=0)   # creates a matrix to store all phenotype values of all individuals in.
+  colnames(phenotype) <- c("year", "patch", "phenotype")
   
   for(t in 1:years){
     
@@ -120,14 +121,17 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
     patch2    <- pop[pop[,1]==2,]
     
     stats <- rbind( stats, c(t, mean(patch1[,2]), var(patch1[,2]), mean(patch2[,2]), var(patch2[,2]))) 
-    phenotype <- rbind(phenotype, c(t, patch1[t,2], patch2[t,2]))
+    #extract phenotypes of each individual each year
+    phenotypes_patch1 <- cbind(rep(t, nrow(patch1)), rep(1, nrow(patch1)), patch1[,2])
+    phenotypes_patch2 <- cbind(rep(t, nrow(patch2)), rep(2, nrow(patch2)), patch2[,2])
+    
+    phenotype <- rbind(phenotype, phenotypes_patch1, phenotypes_patch2)
   }
   
   # return output stats .............................................
   colnames(stats) <- c("year", "mean1", "var1", "mean2", "var2")
   colnames(phenotype) <- c("year", "phenotype1", "phenotype2")
-  return(phenotype)
-  #return(stats)
+  return(list(stats=stats, phenotype=phenotype))  #returns both the stats and the phenotype
   
 }
 
@@ -135,7 +139,9 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
 resFreqMatrix <- matrix(rep.int(0.2,5), nrow=2, ncol=5, byrow = TRUE); row.names(resFreqMatrix)<-c("patch1", "patch2")
 resPropMatrix <- matrix(-2:2, nrow=2, ncol=5, byrow = TRUE)          ; row.names(resPropMatrix)<-c("patch1", "patch2")
 
-data <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(300, 300), resGen=matrix(c(0.5,0.5),ncol=1, nrow=2), mutProb=0.005, mutVar=0.5, years=250, iniPmean=1)
+output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.2,0.2),ncol=1, nrow=2), mutProb=0.005, mutVar=0.5, years=250, iniPmean=1)
+
+data <- output$stats
 
 #For plotting "stats":
 
@@ -150,15 +156,16 @@ par(mfrow=c(1,1))
 
 #Plotting "phenotypes":
 
-# Create a plot with two lines (one for each patch)
-plot(x=data[,1], y=data[,2], type="l", col="blue", xlab="Year", ylab="Phenotype", ylim=c(min(data[,2:3]), max(data[,2:3])))
-lines(x=data[,1], y=data[,3], type="l", col="red")
+phenotype_data <- output$phenotype 
+
+# Create a scatter plot of individual phenotypes
+plot(phenotype_data[,1], phenotype_data[,3], pch=19, col=phenotype_data[,2], xlab="Year", ylab="Phenotype")
 
 # Add a legend to distinguish between patches
-legend("topright", legend=c("Patch 1", "Patch 2"), col=c("blue", "red"), lty=1)
+legend("topright", legend=c("Patch 1", "Patch 2"), col=c(1, 2), pch=19)
 
 # Add a title to the plot
-title("Phenotype Over Years for Patch 1 and Patch 2")
+title("Individual Phenotypes Over Years for Patch 1 and Patch 2")
 
 
 
