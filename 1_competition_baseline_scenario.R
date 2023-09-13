@@ -130,7 +130,7 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
   
   # return output stats .............................................
   colnames(stats) <- c("year", "mean1", "var1", "mean2", "var2")
-  colnames(phenotype) <- c("year", "phenotype1", "phenotype2")
+  colnames(phenotype) <- c("year", "patch", "phenotype")
   return(list(stats=stats, phenotype=phenotype))  #returns both the stats and the phenotype
   
 }
