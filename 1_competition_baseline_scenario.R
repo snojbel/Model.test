@@ -24,6 +24,7 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
   pop[,2] <- rnorm(n=sum(popSize), mean=iniPmean, sd=0.05)
   
   stats         <- NULL
+  phenotype     <- NULL
   
   for(t in 1:years){
     
@@ -119,12 +120,14 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
     patch2    <- pop[pop[,1]==2,]
     
     stats <- rbind( stats, c(t, mean(patch1[,2]), var(patch1[,2]), mean(patch2[,2]), var(patch2[,2]))) 
-    
+    phenotype <- rbind(phenotype, c(t, patch1[t,2], patch2[t,2]))
   }
   
   # return output stats .............................................
   colnames(stats) <- c("year", "mean1", "var1", "mean2", "var2")
-  return(stats)
+  colnames(phenotype) <- c("year", "phenotype1", "phenotype2")
+  return(phenotype)
+  #return(stats)
   
 }
 
@@ -134,6 +137,8 @@ resPropMatrix <- matrix(-2:2, nrow=2, ncol=5, byrow = TRUE)          ; row.names
 
 data <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(300, 300), resGen=matrix(c(0.5,0.5),ncol=1, nrow=2), mutProb=0.005, mutVar=0.5, years=250, iniPmean=1)
 
+#For plotting "stats":
+
 par(mfrow=c(2,1))
 plot( x=data[,1], y=data[,2], lwd=2, col="skyblue", type="l", ylim=c(-2,2), las=1, xlab="year", ylab="avg. phenotype")
 lines(x=data[,1], y=data[,4], lwd=2, col="coral"); abline(h=0, col="gray", lty=1)
@@ -142,6 +147,20 @@ legend("top", legend=c("patch 1", "patch 2"), lwd=2, lty=1, col=c("skyblue", "co
 plot( x=data[,1], y=data[,3], lwd=2, col="skyblue", type="l", ylim=c(0,4), las=1, xlab="year", ylab="phenotypic variance")
 lines(x=data[,1], y=data[,5], lwd=2, col="coral")
 par(mfrow=c(1,1))
+
+#Plotting "phenotypes":
+
+# Create a plot with two lines (one for each patch)
+plot(x=data[,1], y=data[,2], type="l", col="blue", xlab="Year", ylab="Phenotype", ylim=c(min(data[,2:3]), max(data[,2:3])))
+lines(x=data[,1], y=data[,3], type="l", col="red")
+
+# Add a legend to distinguish between patches
+legend("topright", legend=c("Patch 1", "Patch 2"), col=c("blue", "red"), lty=1)
+
+# Add a title to the plot
+title("Phenotype Over Years for Patch 1 and Patch 2")
+
+
 
 # explore parameters with replicates    ----
 propVal    <- c(0.25, 0.4, 0.50, 0.55, 0.6, 0.7, 1.00)
