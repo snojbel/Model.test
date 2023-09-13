@@ -158,8 +158,9 @@ par(mfrow=c(1,1))
 
 phenotype_data <- output$phenotype 
 
+
 # Create a scatter plot of individual phenotypes
-plot(phenotype_data[,1], phenotype_data[,3], pch=19, col=phenotype_data[,2], xlab="Year", ylab="Phenotype")
+plot(phenotype_data[,1], phenotype_data[,3], pch=19, col=rgb(0.5,0.2,0.5, alpha =0.3), xlab="Year", ylab="Phenotype")
 
 # Add a legend to distinguish between patches
 legend("topright", legend=c("Patch 1", "Patch 2"), col=c(1, 2), pch=19)
