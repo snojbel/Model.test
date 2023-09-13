@@ -136,10 +136,12 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
 }
 
 # first test run                        ----
-resFreqMatrix <- matrix(rep.int(0.2,5), nrow=2, ncol=5, byrow = TRUE); row.names(resFreqMatrix)<-c("patch1", "patch2")
+resource.frequency <- c(0.05,0.3,0.1,0.4,0.15)
+resFreqMatrix <- matrix(rep(resource.frequency, 2), nrow=2, ncol=5, byrow = TRUE); row.names(resFreqMatrix)<-c("patch1", "patch2")
 resPropMatrix <- matrix(-2:2, nrow=2, ncol=5, byrow = TRUE)          ; row.names(resPropMatrix)<-c("patch1", "patch2")
 
-output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.2,0.2),ncol=1, nrow=2), mutProb=0.005, mutVar=0.5, years=1000, iniPmean=1)
+
+output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.1,0.1),ncol=1, nrow=2), mutProb=0.005, mutVar=0.5, years=1000, iniPmean=1, dispProb = 0.2)
 
 data <- output$stats
 
@@ -161,14 +163,24 @@ phenotype_data <- output$phenotype
 
 # Create a scatter plot of individual phenotypes
 
+par(mfrow=c(1,1))
+#Two colors, one per patch
+
 colors <- rgb((phenotype_data[,2]-0.9)*0.7,0.2,0.5, alpha =0.3)    #Creates a vector of characters that have two different color identities based on patch idenity.
-plot(phenotype_data[,1], phenotype_data[,3], pch=13, col=colors, xlab="Year", ylab="Phenotype")
+plot(phenotype_data[,1], phenotype_data[,3], pch=16, col=colors, xlab="Year", ylab="Phenotype")
+
+#one color, for computational purposes
+plot(phenotype_data[,1], phenotype_data[,3], pch=16, col=rgb(0.5, 0, 0.1, alpha=0.3), xlab="Year", ylab="Phenotype")
 
 # Add a legend to distinguish between patches
 legend("topright", legend=c("Patch 1", "Patch 2"), col=c(rgb((1-0.9)*0.7,0.2,0.5, alpha =0.6), rgb((2-0.9)*0.7,0.2,0.5, alpha =0.6)), pch=19)
 
 # Add a title to the plot
 title("Individual Phenotypes Over Years for Patch 1 and Patch 2")
+
+
+
+
 
 
 
