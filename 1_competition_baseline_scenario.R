@@ -21,7 +21,7 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
   colnames(pop) <- c("patch", "pheno", "fec")
   
   pop[,1] <- c(rep.int(1,popSize[1]), rep.int(2, popSize[2]))
-  pop[,2] <- rnorm(n=sum(popSize), mean=iniPmean, sd=0.05)
+  pop[,2] <- iniPmean #rnorm(n=sum(popSize), mean=iniPmean, sd=0.05)
   
   stats         <- NULL
   phenotype <- matrix(NA, ncol=3, nrow=0)   # creates a matrix to store all phenotype values of all individuals in.
@@ -136,16 +136,16 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
 }
 
 # first test run                        ----
-resource.frequency <- c(0.05,0.1,0.1,0.6,0.15,  #res. freq. of patch 1
-                        0.7, 0.05, 0.05, 0.1, 0.1) #res. freq. pf patch 2
-resource.property<- c(-4,-2,-1,3,3,  #res. property of patch 1
-                        -1, 0, 1, 2, 2) #res. property pf patch 2
+resource.frequency <- c(0.1,0.2,0.4,0.2,0.1,  #res. freq. of patch 1
+                        0.1,0.2,0.4,0.2,0.1) #res. freq. pf patch 2
+resource.property<- c(-2,-1,0,1,2,  #res. property of patch 1
+                        -2, -1, 0, 1, 2) #res. property pf patch 2
 
 resFreqMatrix <- matrix(resource.frequency, nrow=2, ncol=5, byrow = TRUE); row.names(resFreqMatrix)<-c("patch1", "patch2")
 resPropMatrix <- matrix(resource.property, nrow=2, ncol=5, byrow = TRUE)          ; row.names(resPropMatrix)<-c("patch1", "patch2")
 
 
-output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.1,0.1),ncol=1, nrow=2), mutProb=0.004, mutVar=0.15, years=150, iniPmean=1, dispProb = 0.2)
+output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.1,0.1),ncol=1, nrow=2), mutProb=0.001, mutVar=0.02, years=2450, iniPmean=-1, dispProb = 0.2)
 
 data <- output$stats
 
