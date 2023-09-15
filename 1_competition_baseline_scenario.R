@@ -136,16 +136,16 @@ resourceCompetition <- function(resProp, resFreq, popSize, resGen=1, mutProb=0.0
 }
 
 # first test run                        ----
-resource.frequency <- c(0.1,0.2,0.4,0.2,0.1,  #res. freq. of patch 1
-                        0.1,0.2,0.4,0.2,0.1) #res. freq. pf patch 2
-resource.property<- c(-2,-1,0,1,2,  #res. property of patch 1
-                        -2, -1, 0, 1, 2) #res. property pf patch 2
+resource.frequency <- c(0.3,0.2,0.2,0.2,0.1,  #res. freq. of patch 1
+                        0.1,0.2,0.2,0.2,0.3) #res. freq. pf patch 2
+resource.property<- c(7,7,7,6,5,  #res. property of patch 1
+                        5, 4, 3, 3, 3) #res. property pf patch 2
 
 resFreqMatrix <- matrix(resource.frequency, nrow=2, ncol=5, byrow = TRUE); row.names(resFreqMatrix)<-c("patch1", "patch2")
 resPropMatrix <- matrix(resource.property, nrow=2, ncol=5, byrow = TRUE)          ; row.names(resPropMatrix)<-c("patch1", "patch2")
 
 
-output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.1,0.1),ncol=1, nrow=2), mutProb=0.001, mutVar=0.02, years=2450, iniPmean=-1, dispProb = 0.2)
+output <- resourceCompetition(resProp=resPropMatrix, resFreq=resFreqMatrix, popSize=c(100, 100), resGen=matrix(c(0.1,0.1),ncol=1, nrow=2), mutProb=0.002, mutVar=0.002, years=2450, iniPmean=5, dispProb = 0.01)
 
 data <- output$stats
 
@@ -176,7 +176,8 @@ patch2_phenotype <- phenotype_data[phenotype_data[,2]==2, ]
 par(mfrow=c(1,1))
 #Two colors, one per patch
 
-colors <- rgb((phenotype_data[,2]-0.9)*0.7,0.59,0.8, alpha =0.3)    #Creates a vector of characters that have two different color identities based on patch idenity.
+#creating colors takes maybe to long to always be worth it.
+colors <- rgb((phenotype_data[,2]-0.9)*0.7,0.59,0.8, alpha =0.1)    #Creates a vector of characters that have two different color identities based on patch idenity.
 
 plot(phenotype_data[,1], phenotype_data[,3], pch=16, col=colors, xlab="Year", ylab="Phenotype")
 
