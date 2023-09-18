@@ -171,16 +171,17 @@ lines(x=0:50, y=simOutput[,10], lwd=1, col="gray")
 
 #Alternative plotting (With Color)----------------------------------
 
-simOutput<- logisticGrowth_BevHolt_sim(N0=5, b=0.001, l_max=1.6, years=50) 
+simOutput<- logisticGrowth_BevHolt_sim(N0=5, b=0.001, l_max=1.4, years=50) 
 plot(x=simOutput[,1], y=simOutput[,2], col = (rgb(runif(1), runif(1), runif(1), alpha=0.3)), lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,max(simOutput[,2])+100))
 for(r in 1:10){ # running 10 replicates (independent simulation runs)
   
-  simOutput<- logisticGrowth_BevHolt_sim(N0=5, b=0.001, l_max=1.6, years=50)  # store the population sizes of each replicate in a single matrix
+  simOutput<- logisticGrowth_BevHolt_sim(N0=5, b=0.001, l_max=1.4, years=50)  # store the population sizes of each replicate in a single matrix
   lines(x=simOutput[,1], y=simOutput[,2], col = (rgb(runif(1), runif(1), runif(1), alpha=0.3)) , lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,500))
 }
 
+#--------------
 
-# -----------------------------------------
+
 
 dataMath <- logisticGrowth_BevHolt_math(N0=3, b=0.001, l_max=1.4, years=50)
 lines(x=dataMath[,1], y=dataMath[,2], col="black", lty=1, lwd=2)
