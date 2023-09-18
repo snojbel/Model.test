@@ -30,7 +30,7 @@ logisticGrowth_BevHolt_math <- function(N0=2, b=0.001, l_max=1.4, years=100){
 
 # function usage:
 dataMath <- logisticGrowth_BevHolt_math(N0=2, b=0.001, l_max=1.4, years=50)
-plot( x=dataMath[,1], y=dataMath[,2], col="skyblue", lty=1, lwd=3, las=1, type="p", pch=16, xlab="time", ylab="population size (N)", ylim=c(0,500)) # 
+plot( x=dataMath[,1], y=dataMath[,2], col="skyblue", lty=1, lwd=3, las=1, type="p", pch=16, xlab="time", ylab="population size (N)", ylim=c(0,max(dataMath[,2])+100)) # 
 
 # fecundity         ----
 # in the following lines, the fecundity is plotted (y-axis) against population size (x-axis)
@@ -38,7 +38,7 @@ b     <- 0.001   # competition coefficient
 l_max <- 1.4     # max. fecundity at very low densities
 N     <- 1:1000  # possible population sizes
 fec   <- l_max / (1 + b * N)
-plot(x=N, y=fec, type="p", pch=16, lwd=3, col="coral", las=1, ylim=c(0,1.5), xlab="population size, N", ylab="individual fecundity, f(N)")
+plot(x=N, y=fec, type="p", pch=16, lwd=2, col="coral", las=1, ylim=c(0,1.5), xlab="Population size, N", ylab="Individual fecundity, f(N)")
 abline(h=1, col="gray", lty=2)
 rm(b, l_max, N, fec) # removing the parameters from the workspace again.
 
@@ -59,7 +59,7 @@ abline(v=logisticGrowth_BevHolt_K(b=0.001, l_max=1.4)) # adding a line to a plot
 # we will sample the individual fecundity from a Poisson distribution (check wikipedia for more information)
 # The Poisson is a discrete distribution (result in whole numbers / integers). This makes sense for fecundity.
 
-hist(rpois(n=100000, lambda=2)+0.001, main="Poisson distribution", xlab="individual fecundity, f(N)", las=1, freq = F) 
+hist(rpois(n=100000, lambda=2)+0.001, main="Poisson distribution", xlab="individual fecundity, f(N)", las=1, freq = F)   #lambda is expected value of function
 
 # change lambda to see the probability distribution with other mean fecundities.
 
@@ -70,7 +70,7 @@ logisticGrowth_BevHolt_sim <- function(N0=2, b=0.001, l_max=1.4, years=50){
   # example input ........................................................
   # inside a function, you can only use the input parameters (the parameters inside of function() ...). Every other parameter in the workspace cannot be used.
   # When writing your function, it is often helpful to define a set of example input parameters to see how the function works. Uncomment the following line (remove the hashtag) and run it.
-  # N0<-2; b<-0.001; l_max<-1.4; years<-50 # example input parameters for coding purposes
+  #N0<-2; b<-0.001; l_max<-1.4; years<-50 # example input parameters for coding purposes
   # However, comment the previous line again when you are done with coding the function !!! Otherwise, your input parameters will always be overwritten.
   
   # 0) set initial population matrix .....................................
@@ -108,9 +108,9 @@ logisticGrowth_BevHolt_sim <- function(N0=2, b=0.001, l_max=1.4, years=50){
 
 # first test run    ----
 # run a first test simulation and have a look at the output
-simOutput <- logisticGrowth_BevHolt_sim(N0=10, b=0.001, l_max=1.4, years=50) 
+simOutput <- logisticGrowth_BevHolt_sim(N0=10, b=0.002, l_max=1.4, years=50) 
 
-plot(x=simOutput[,column=1], y=simOutput[,column=2], lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,500))
+plot(x=simOutput[,column=1], y=simOutput[,column=2], lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,max(simOutput[,2]+50)))
 
 # debugging         ----
 # 1) personal code checking (does the code make sense?)
@@ -120,13 +120,13 @@ plot(x=simOutput[,column=1], y=simOutput[,column=2], lwd=2, type="l", xlab="time
 # a) carrying capacity
 simOutput <- logisticGrowth_BevHolt_sim(N0=10, b=0.001, l_max=1.4, years=100)
 K         <- logisticGrowth_BevHolt_K(         b=0.001, l_max=1.4)
-plot(  x=simOutput[,column=1], y=simOutput[,column=2], lwd=2, type="l", xlab="time", ylab="population size (N)", las=1)
+plot(  x=simOutput[,column=1], y=simOutput[,column=2], lwd=2, type="l", xlab="time", ylab="population size (N)", las=1,ylim=c(0,max(simOutput[,2]+50)))
 abline(h=K, lty=3, col="gray", lwd=2) # this adds a line at the carrying capacity predicted by the mathematical model
 rm(K)
 
 # b) growth tragectory
 dataMath <- logisticGrowth_BevHolt_math(N0=10, b=0.001, l_max=1.4, years=100)
-lines(x=dataMath[,1], y=dataMath[,2], col="skyblue", lty=2, lwd=2)
+lines(x=dataMath[,1], y=dataMath[,2], col="darkslategray3", lty=2, lwd=2)
 
 # 5) extreme scenario tests
 # a) what happens when we start with zero individuals ?
@@ -141,7 +141,7 @@ abline(h=logisticGrowth_BevHolt_K(b=0.001, l_max=1.4), lty=3, col="gray", lwd=2)
 
 # c) what happens at extreme fecundities ?
 simOutput <- logisticGrowth_BevHolt_sim(N0=10, b=0.001, l_max=40, years=100)
-plot(x=simOutput[,1], y=simOutput[,2], lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,50000))
+plot(x=simOutput[,1], y=simOutput[,2], lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,max(simOutput[,2]+50)))
 abline(h=logisticGrowth_BevHolt_K(b=0.001, l_max=40), lty=3, col="gray", lwd=2) # this is the carrying capacity predicted by the mathematical model
 
 
@@ -155,6 +155,7 @@ for(r in 1:10){ # running 10 replicates (independent simulation runs)
   simOutput <- cbind(simOutput, logisticGrowth_BevHolt_sim(N0=3, b=0.001, l_max=1.4, years=50)[,2])  # store the population sizes of each replicate in a single matrix
   
 }
+
 # plot the replicates beside each other:
 plot( x=0:50, y=simOutput[,1], lwd=1, col="gray", type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,500))
 lines(x=0:50, y=simOutput[,2], lwd=1, col="gray")
@@ -166,6 +167,20 @@ lines(x=0:50, y=simOutput[,7], lwd=1, col="gray")
 lines(x=0:50, y=simOutput[,8], lwd=1, col="gray")
 lines(x=0:50, y=simOutput[,9], lwd=1, col="gray")
 lines(x=0:50, y=simOutput[,10], lwd=1, col="gray")
+
+
+#Alternative plotting (With Color)----------------------------------
+
+simOutput<- logisticGrowth_BevHolt_sim(N0=5, b=0.001, l_max=1.6, years=50) 
+plot(x=simOutput[,1], y=simOutput[,2], col = (rgb(runif(1), runif(1), runif(1), alpha=0.3)), lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,max(simOutput[,2])+100))
+for(r in 1:10){ # running 10 replicates (independent simulation runs)
+  
+  simOutput<- logisticGrowth_BevHolt_sim(N0=5, b=0.001, l_max=1.6, years=50)  # store the population sizes of each replicate in a single matrix
+  lines(x=simOutput[,1], y=simOutput[,2], col = (rgb(runif(1), runif(1), runif(1), alpha=0.3)) , lwd=2, type="l", xlab="time", ylab="population size (N)", las=1, ylim=c(0,500))
+}
+
+
+# -----------------------------------------
 
 dataMath <- logisticGrowth_BevHolt_math(N0=3, b=0.001, l_max=1.4, years=50)
 lines(x=dataMath[,1], y=dataMath[,2], col="black", lty=1, lwd=2)
