@@ -40,7 +40,7 @@ plot(
   y = inds[, 3],              # y-coordinate data
   pch = 16,                   # Point character (solid circle)
   cex = 2,                    # Point size (enlarged by a factor of 2)
-  col = rgb(1, 0.5, 0.8),
+  col = rgb(1, 0.5, 0),
   xlim = c(1, 8),             # X-axis limits (range from 1 to 8)
   ylim = c(1, 8),             # Y-axis limits (range from 1 to 8)
   xlab = "x location",        # X-axis label
@@ -58,7 +58,7 @@ for (i in 1:time_steps){
          y = inds[, 3],              # y-coordinate data
          pch = 16,                   # Point character (solid circle)
          cex = 2,                    # Point size (enlarged by a factor of 2)
-         col = rgb((1/(i/4), 0.5, 0.8, alpha = 0.7))
+         col = rgb(1, 0.5, i/20, alpha = 0.7))
 }
 
 
