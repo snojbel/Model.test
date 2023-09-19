@@ -1,0 +1,38 @@
+---
+title: "IBMs"
+author: "Bell the best"
+date: "2023-09-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Individual based models eg Agent-based models
+
+Models systems of discrete individuals and simulate changes in indivudal composition and properties. Can be used in conjunction with experimental data to predict dynamics of complex systems. 
+
+*Perks*:(1) Includes among individual variation x. genotype, phenotype or location. 
+        (2)Indivduals are discrete, so stochasticty is naturally apart of the model. x. genetic drift.
+        
+Individuals are represented in a list, table, matrix etc. 
+
+### For example:
+
+```{r}
+inds <- array(data = 0, dim =c (5,3))
+colnames(inds) <- paste0("Characteristic ", 1:ncol(inds))
+rownames(inds) <- paste0("Individual ", 1:nrow(inds))
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
