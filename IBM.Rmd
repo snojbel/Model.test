@@ -199,4 +199,58 @@ for (i in 1:time_steps){
 
 ```
 
+To save each time step we have to adjust it slightly:
+
+```{r}
+
+time_steps <- 20;
+inds_hist  <- NULL; # Here's the list
+for(i in 1:time_steps){
+    inds            <- movement(inds)
+    inds_hist[[i]] <- inds; # Add to list
+}
+print(inds)
+
+for (i in 1:5) {
+  print(paste0("Year ", i))
+  print(inds_hist[[1]])
+} 
+
+```
+
+We can then extract the information for indivdual 1 over the 20 years:
+
+```{r}
+
+indi_1 <- matrix(data= NA, nrow=20, ncol = 3)
+colnames(indi_1) <- c("Year", "x-location", "y-location")
+
+for(i in 1:time_steps){
+  indi_1[i, 1] <- i    #saves timestep in first column
+  indi_1[i, 2] <- inds_hist[[i]][1,2]  #extracts x(2) value for the i timestep of individual 1 (1)
+  indi_1[i, 3] <- inds_hist[[i]][1,3]  # -'- but for the y(3) value
+}
+
+print(indi_1)
+
+plot(
+  x = indi_1[, 2],              # x-coordinate data
+  y = indi_1[, 3],              # y-coordinate data
+  pch = 16,                   # Point character (solid circle)
+  col = rainbow(20),
+  cex = 2,                    # Point size (enlarged by a factor of 2)
+  xlim = c(1, 8),             # X-axis limits (range from 1 to 8)
+  ylim = c(1, 8),             # Y-axis limits (range from 1 to 8)
+  xlab = "x location",        # X-axis label
+  mar = c(5, 5, 1, 1),        # Margins for the plot (bottom, left, top, right)
+  ylab = "y location",        # Y-axis label
+  cex.lab = 1.5,              # Size of axis labels (enlarged by a factor of 1.5)
+  cex.axis = 1.5              # Size of axis values (enlarged by a factor of 1.5)
+)
+
+
+
+
+```
+
 
