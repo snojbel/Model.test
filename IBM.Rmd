@@ -24,15 +24,134 @@ Individuals are represented in a list, table, matrix etc.
 inds <- array(data = 0, dim =c (5,3))
 colnames(inds) <- paste0("Characteristic ", 1:ncol(inds))
 rownames(inds) <- paste0("Individual ", 1:nrow(inds))
+print(inds)
+```
+
+## Characteristics
+
+Choosing which characteristics to model is of utmost important. It can be anything from phenotype, to location, to temporary statuses, like breeding. Whatever characteristics we choose, these will the biological process that we're trying to understand with out model.
+
+So lets give our individuals some characteristics.
+
+```{r}
+colnames(inds) <- c("Body Mass", "x location", "y location")
 
 ```
 
-## Including Plots
+Body mass being normally distributed is a logical assumption. Roe deer roughly has a mean around 23 with standard deviation of 3. So lets use that as an example. Though it does not necessarily have to be roe deer in mind.
 
-You can also embed plots, for example:
+```{r}
+inds[, 1] <- rnorm(n = nrow(inds), mean = 23, sd = 3)   #writing inds[,1] is the same as inds[1:5, 1]
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+dim(inds)  #returns dimensions of matrix or array as a list [1] rows and [2] columns
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Lets also give each individual a location in a 8x8 grid. Which will allow us to model distance and visually present information regarding relative position. 
+
+```{r}
+inds[, 2] <- sample(x = 1:8, size = nrow(inds), replace = T)
+inds[, 3] <- sample(x=1:8, size = nrow(inds), replace = T)
+```
+
+This enables us to plot them in our imaginary landscape:
+
+```{r}
+plot(
+  x = inds[, 2],              # x-coordinate data
+  y = inds[, 3],              # y-coordinate data
+  pch = 16,                   # Point character (solid circle)
+  cex = 2,                    # Point size (enlarged by a factor of 2)
+  xlim = c(1, 8),             # X-axis limits (range from 1 to 8)
+  ylim = c(1, 8),             # Y-axis limits (range from 1 to 8)
+  xlab = "x location",        # X-axis label
+  mar = c(5, 5, 1, 1),        # Margins for the plot (bottom, left, top, right)
+  ylab = "y location",        # Y-axis label
+  cex.lab = 1.5,              # Size of axis labels (enlarged by a factor of 1.5)
+  cex.axis = 1.5              # Size of axis values (enlarged by a factor of 1.5)
+)
+
+```
+
+## Movement of individuals
+
+Lets allow individuals to increase to decrease their x and y location by 1 cell. 
+
+```{r}
+
+x_move <- sample(x = c(-1, 0, 1), size = nrow(inds), replace = T)
+y_move <- sample(x = c(-1, 0, 1), size = nrow(inds), replace = T)
+
+inds[, 2] <- inds[, 2] + x_move
+inds[, 3] <- inds[, 3] + y_move
+plot(
+  x = inds[, 2] - x_move,              # x-coordinate data
+  y = inds[, 3] - y_move,              # y-coordinate data
+  pch = 16,                   # Point character (solid circle)
+  cex = 2,                    # Point size (enlarged by a factor of 2)
+  xlim = c(1, 8),             # X-axis limits (range from 1 to 8)
+  ylim = c(1, 8),             # Y-axis limits (range from 1 to 8)
+  xlab = "x location",        # X-axis label
+  mar = c(5, 5, 1, 1),        # Margins for the plot (bottom, left, top, right)
+  ylab = "y location",        # Y-axis label
+  cex.lab = 1.5,              # Size of axis labels (enlarged by a factor of 1.5)
+  cex.axis = 1.5              # Size of axis values (enlarged by a factor of 1.5)
+)
+
+points(x = inds[, 2],              # x-coordinate data
+  y = inds[, 3],              # y-coordinate data
+  pch = 16,                   # Point character (solid circle)
+  cex = 2,                    # Point size (enlarged by a factor of 2)
+  col = ("mediumpurple"),
+  xlim = c(1, 8),             # X-axis limits (range from 1 to 8)
+  ylim = c(1, 8),             # Y-axis limits (range from 1 to 8)
+  xlab = "x location",        # X-axis label
+  mar = c(5, 5, 1, 1),        # Margins for the plot (bottom, left, top, right)
+  ylab = "y location",        # Y-axis label
+  cex.lab = 1.5,              # Size of axis labels (enlarged by a factor of 1.5)
+  cex.axis = 1.5              # Size of axis values (enlarged by a factor of 1.5)
+  )
+arrows(
+  x0 = inds[, 2] - x_move,  # Starting x-coordinates (old positions)
+  y0 = inds[, 3] - y_move,  # Starting y-coordinates (old positions)
+  x1 = inds[, 2],          # Ending x-coordinates (new positions)
+  y1 = inds[, 3],          # Ending y-coordinates (new positions)
+  length = 0.1,            # Length of the arrowheads
+  angle = 30,              # Angle of the arrowheads
+  code = 2,                # Type of arrowhead (2 for closed arrowheads)
+  col = "grey",            # Arrow color
+  lwd = 2                  # Modifies the thickness of the arrow
+)
+```
+
+Although the above code is fine it is a good idea to create the same effect using a function:
+
+```{r}
+movement <- function(inds, xloc = 2, yloc = 3){
+    total_inds   <- dim(inds)[1] # Get the number of individuals in inds by checking number of rows
+    move_dists   <- c(-1, 0, 1)  # Define the possible distances to move
+    x_move       <- sample(x = move_dists, size = total_inds, replace = TRUE)
+    y_move       <- sample(x = move_dists, size = total_inds, replace = TRUE)
+    inds[, xloc] <- inds[, xloc] + x_move
+    inds[, yloc] <- inds[, yloc] + y_move
+    return(inds)
+}
+```
+ 
+We can now easily move indivduals by using this line of code:
+
+```{r}
+inds <- movement(inds)
+```
+
+Lets have our roe deer run around for a while in a simulation:
+
+```{r}
+time_steps <- 20
+for (i in i:time_steps)
+  inds <- movement(inds)
+
+```
+
+But as we had a boundry of 8x8 some of our indivduals have run away, we can't have that so lets put up a digital fence
+
