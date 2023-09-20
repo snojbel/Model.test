@@ -203,7 +203,7 @@ To save each time step we have to adjust it slightly:
 
 ```{r}
 
-time_steps <- 20;
+time_steps <- 20
 inds_hist  <- NULL; # Here's the list
 for(i in 1:time_steps){
     inds            <- movement(inds)
@@ -233,11 +233,14 @@ for(i in 1:time_steps){
 
 print(indi_1)
 
+colorrange <- colorRampPalette(c("chartreuse", "cyan"))
+my.colorrange <- colorrange(20)
+
 plot(
   x = indi_1[, 2],              # x-coordinate data
   y = indi_1[, 3],              # y-coordinate data
   pch = 16,                   # Point character (solid circle)
-  col = rainbow(20),
+  col = my.colorrange,
   cex = 2,                    # Point size (enlarged by a factor of 2)
   xlim = c(1, 8),             # X-axis limits (range from 1 to 8)
   ylim = c(1, 8),             # Y-axis limits (range from 1 to 8)
@@ -248,9 +251,73 @@ plot(
   cex.axis = 1.5              # Size of axis values (enlarged by a factor of 1.5)
 )
 
+```
+Adding offspring and birth to our model is the next step:
 
+
+```{r}
+inds           <- array(data = 0, dim = c(5, 4))
+colnames(inds) <- c("body_mass", "x_loc", "y_loc", "repr")
+rownames(inds) <- c("ind_1", "ind_2", "ind_3", "ind_4", "ind_5")
+inds[,1]       <- rnorm(n = dim(inds)[1], mean = 23, sd = 3)
+inds[,2]       <- sample(x = 1:8, size = dim(inds)[1], replace = TRUE)
+inds[,3]       <- sample(x = 1:8, size = dim(inds)[1], replace = TRUE)
+
+print(inds)
+
+birth <- function(inds, lambda = 0.5, repr_col = 4) {
+  total.inds <- nrow(inds)
+  inds.col <- ncol(inds)
+  inds[, repr_col] <- rpois(n =total.inds, lambda = lambda)
+  total.offspring <- sum(inds[,repr_col])
+      # the above code is reproduction, the below code is making new rows for the offspring. 
+  new.inds <- matrix(data = 0, nrow = total.offspring, ncol = inds.col)
+  new.inds[, 1] <- rnorm(n = nrow(new.inds), mean = 23, sd = 3)
+  new.inds[, 2] <- sample(x = 1:8, size = nrow(new.inds), replace = T)
+  new.inds[, 3] <- sample(x = 1:8, size = nrow(new.inds), replace = T)
+      # Adding the offspring to the adults
+  inds <- rbind(inds, new.inds)
+  return(inds)
+}
+
+#New generation
+inds <- birth(inds = inds)
+rownames(inds) <- paste0("Individual ", 1:nrow(inds))
+print(inds)
 
 
 ```
+We can then simulate both movement and birth:
+
+```{r}
+time.steps <- 10
+inds.hist <- NULL
+
+for( i in 1:time.steps){
+  inds <- movement(inds)
+  inds <- birth(inds)
+  inds.hist[[i]] <- inds
+}
+
+#Number of indivduals after 10 time steps:
+print(nrow(inds.hist[[10]]))
+
+ind.abund <- matrix(data = NA, nrow = 10, ncol = 2)
+
+for (i in 1:time.steps) {
+  ind.abund[i,1] <- i
+  ind.abund[i,2] <- nrow(inds.hist[[i]])
+}
+
+print(ind.abund)
+
+
+```
+
+
+
+
+
+
 
 
