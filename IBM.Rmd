@@ -415,7 +415,7 @@ predation <- function(pred, inds, xcol = 2, ycol = 3, rcol = 4, dcol = 5){
   for (p in 1:predators){
     xloc <- pred[p, xcol]  #Extracts location of predator p
     yloc <- pred[p, ycol]
-    N.prey <- sum(inds[,xcol] == xcol & inds[, ycol] == yloc)  #sums all the prey on p's location
+    N.prey <- sum(inds[, xcol] == xcol & inds[, ycol] == yloc)  #sums all the prey on p's location
     if(N.prey > 0){
       pred[p, dcol] <- 0   #The predator does not die
     }
