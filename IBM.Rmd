@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+*(This code was made using https://bradduthie.github.io/blog/individual-based-models-in-r/ guide.)*
+
 ## Individual based models eg Agent-based models
 
 Models systems of discrete individuals and simulate changes in indivudal composition and properties. Can be used in conjunction with experimental data to predict dynamics of complex systems. 
@@ -17,6 +19,7 @@ Models systems of discrete individuals and simulate changes in indivudal composi
         (2)Indivduals are discrete, so stochasticty is naturally apart of the model. x. genetic drift.
         
 Individuals are represented in a list, table, matrix etc. 
+
 
 ### For example:
 
@@ -314,8 +317,88 @@ print(ind.abund)
 
 ```
 
+This model will grow exponentially, since there is no death and no density dependance. So lets also simulate some density dependent death. Since we have a spatial model lets assume each cell can only hold one indivdual. 
 
 
+```{r}
+inds <- matrix(data = 0, nrow = 5, ncol = 5)
+colnames(inds) <- c("body.mass", "loc.x", "loc.y", "reproduction", "death") 
+rownames(inds) <- paste0("Individual ", 1:nrow(inds))
+
+inds[,1]       <- rnorm(n = nrow(inds), mean = 23, sd = 3)
+inds[,2]       <- sample(x = 1:8, size = nrow(inds), replace = TRUE)
+inds[,3]       <- sample(x = 1:8, size = nrow(inds), replace = TRUE)
+
+death <- function(inds, xlen = 8, ylen = 8, xcol = 2, ycol = 3, dcol = 5){
+  for (xdim in 1:xlen){
+    for(ydim in 1:ylen){
+      on.cell <- sum(inds[,xcol] == xdim & inds[, ycol] == ydim)
+      if (on.cell > 1) {
+        occupants <- which(inds[, xcol] == xdim & inds[, ycol] == ydim)   #occupants who live on the overpopulated cell, i.e. their row number
+        random <- sample(x = occupants, size = on.cell - 1)    # randomly chooses all but on of the individuals from the vector on the cell 
+        inds[random, dcol] <- 1             # sets individuals sampled death to 1
+      }
+    }
+  }
+  return(inds)
+}
+
+inds[2, 2] <- inds[1, 2]; # Individiual 2 now in same x location as 1
+inds[2, 3] <- inds[1, 3]; # Individiual 2 now in same x location as 1
+inds[3, 2] <- inds[1, 2]; # Individiual 3 now in same x location as 1
+inds[3, 3] <- inds[1, 3]; # Individiual 3 now in same x location as 1
+
+inds <- death(inds = inds)
+
+inds <- inds[inds[, 5] == 0, ] # Removes all individuals who do not have a 0 in their fifth column, i.e. removes dead individuals. the , is important, dont forget it.  
+print(inds)
+
+```
+
+Lets put it all together :) (movement, birth and death):
+
+```{r}
+# Create individuals
+
+inds <- matrix(data = 0, nrow = 5, ncol = 5)
+colnames(inds) <- c("body.mass", "loc.x", "loc.y", "reproduction", "death") 
+rownames(inds) <- paste0("Individual ", 1:nrow(inds))
+
+inds[,1]       <- rnorm(n = nrow(inds), mean = 23, sd = 3)
+inds[,2]       <- sample(x = 1:8, size = nrow(inds), replace = TRUE)
+inds[,3]       <- sample(x = 1:8, size = nrow(inds), replace = TRUE)
+
+time.steps <- 40
+inds.hist <- NULL
+for (i in 1:time.steps){
+  inds <- movement(inds)
+  inds <- birth(inds)
+  inds <- death(inds)
+  inds <- inds[inds[, 5] == 0, ]
+  inds.hist[[i]] <- inds
+}
+
+ind.abund <- matrix(data = NA, nrow = time.steps, ncol = 2)
+for (i in 1:time.steps){
+  ind.abund[i, 1] <- i
+  ind.abund[i, 2] <- nrow(inds.hist[[i]])
+}
+
+plot(x = ind.abund[,1], y =ind.abund[,2], ylab = "Number of Individuals", xlab = "Years", col = "darkslategrey", pch = 16)
+
+```
+
+## Predator prey dynamics
+
+Using the previous code inds to represent prey we will now add predators in a similar way:
+
+```{r}
+pred <-  matrix(data = 0, nrow = 5, ncol = 5)
+colnames(pred) <- c("bodymass", "x location", "y location", "Birth", "Death")
+rownames(pred) <- paste0("Predator ", 1:nrow(pred))
+
+
+```
 
 
 
